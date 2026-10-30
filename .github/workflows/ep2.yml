@@ -219,7 +219,7 @@ jobs:
 
       - name: Publicar imagen en GHCR
         id: publish
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
@@ -376,7 +376,7 @@ jobs:
               "curl -fsSL https://raw.githubusercontent.com/Moonlighpoio/perfumes-api/main/compose.yaml -o compose.yaml",
               "mkdir -p nginx",
               "curl -fsSL https://raw.githubusercontent.com/Moonlighpoio/perfumes-api/main/nginx/nginx.conf -o nginx/nginx.conf",
-              "printf \"IMAGE_TAG=ghcr.io/moonlighpoio/perfumes-api:latest\\nAPP_VERSION=2.0.1\\n\" > .env",
+              "printf \"IMAGE_TAG=ghcr.io/moonlighpoio/perfumes-api:${{ github.sha }}\\nAPP_VERSION=2.0.1\\n\" > .env",
               "docker compose pull",
               "docker compose up -d --wait",
               "docker compose ps"
