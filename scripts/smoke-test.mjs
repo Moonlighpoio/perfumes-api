@@ -85,6 +85,10 @@ const main = async () => {
   assert(createdBody.id, 'el perfume creado no tiene id');
   console.log('OK  POST /perfumes -> 201');
 
+  const createdItem = await getJson(`/perfumes/${createdBody.id}`);
+  assert(createdItem.body.id === createdBody.id, 'el perfume creado no se puede leer después (store compartido)');
+  console.log('OK  GET /perfumes/:id del item creado (store compartido)');
+
   const response = await fetch(`${BASE_URL}/health`);
   assert(response.headers.get('x-content-type-options') === 'nosniff', 'faltan cabeceras de seguridad del gateway');
   console.log('OK  cabeceras de seguridad del gateway');

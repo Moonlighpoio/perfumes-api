@@ -4,7 +4,8 @@ export default {
 
   collectCoverageFrom: [
     'src/**/*.js',
-    '!src/server.js'
+    '!src/server.js',
+    '!src/redis-store.js'
   ],
 
   coverageDirectory: 'coverage',

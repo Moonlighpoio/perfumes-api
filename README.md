@@ -21,7 +21,7 @@ API REST que permite listar, filtrar, buscar, ordenar y crear perfumes. El objet
 | Pruebas | Jest + Supertest |
 | Calidad | ESLint + umbral de cobertura |
 | Contenedores | Docker multi-stage (non-root) |
-| Orquestación | Docker Compose + 3 réplicas + Nginx |
+| Orquestación | Docker Compose + 3 réplicas + Nginx + Redis |
 | CI/CD | GitHub Actions |
 | Seguridad | Dependabot + `pnpm audit` + Snyk + Trivy + CodeQL |
 | Registro de imágenes | GitHub Container Registry (GHCR) |
@@ -36,7 +36,7 @@ flowchart LR
     N -->|balanceo| A1[API réplica 1]
     N --> A2[API réplica 2]
     N --> A3[API réplica 3]
-    A1 & A2 & A3 --> M[(Catálogo en memoria)]
+    A1 & A2 & A3 --> R[(Redis<br/>store compartido)]
     subgraph Red interna backend
       N
       A1
@@ -47,6 +47,7 @@ flowchart LR
 
 - Solo el **gateway Nginx** publica el puerto `3000`.
 - La **API** corre con 3 réplicas, sin puertos publicados, en una red interna.
+- El catálogo se persiste en **Redis compartido**: todas las réplicas leen y escriben el mismo store, garantizando consistencia entre clientes y réplicas.
 - Cada contenedor tiene healthcheck, límites de CPU/memoria, filesystem de solo lectura, `cap_drop: ALL` y `no-new-privileges`.
 
 ---
@@ -166,7 +167,7 @@ flowchart LR
 - **3 réplicas** de la API (`deploy.replicas: 3`) detrás de Nginx.
 - Balanceo con `upstream` de Nginx y afinidad por IP (`ip_hash`) sobre las 3 réplicas.
 - DNS interno de Docker con `resolver 127.0.0.11` para refrescar las IPs de las réplicas.
-- La afinidad por IP mantiene consistencia entre `POST` y `GET` sobre el catálogo en memoria.
+- El catálogo se persiste en **Redis compartido**, por lo que todos los clientes ven el mismo estado aunque cambien de réplica.
 - Límites y reservas de CPU/memoria por servicio.
 - Healthchecks de API y gateway; `depends_on` con `condition: service_healthy`.
 - Red interna segmentada: la API no está expuesta directamente.
@@ -245,7 +246,7 @@ pnpm test:ci              -> 30/30 pruebas, 100% cobertura
 pnpm audit --prod         -> 0 vulnerabilidades
 docker build              -> OK (multi-stage, non-root)
 trivy image (HIGH/CRIT)   -> 0 vulnerabilidades corregibles
-docker compose up --wait  -> 3 réplicas de API + gateway healthy
+docker compose up --wait  -> 3 réplicas de API + gateway + Redis healthy
 smoke test                -> 11 verificaciones OK
 ```
 
@@ -259,7 +260,7 @@ smoke test                -> 11 verificaciones OK
 | **IE2** Pruebas automatizadas | 20% | `tests/perfumes.test.js`, `jest.config.js`, umbral 90%, job `quality` |
 | **IE3** Seguridad y escalabilidad | 20% | `.github/dependabot.yml`, Snyk, CodeQL, Trivy, `pnpm audit`, gates con `needs`, réplicas y límites |
 | **IE4** Despliegue y trazabilidad | 20% | Job `deploy`, entornos staging/production, tag SHA, GHCR, smoke tests, release |
-| **IE5** Orquestación | 20% | `compose.yaml` con 3 réplicas, Nginx, red interna, healthchecks, hardening |
+| **IE5** Orquestación | 20% | `compose.yaml` con 3 réplicas, Nginx, Redis compartido, red interna, healthchecks, hardening |
 
 ---
 

@@ -19,6 +19,7 @@ services:
       NODE_ENV: production
       PORT: "3000"
       APP_VERSION: ${APP_VERSION:-2.0.0}
+      REDIS_URL: redis://redis:6379
 
     expose:
       - "3000"
@@ -50,6 +51,49 @@ services:
 
     read_only: true
     tmpfs:
+      - /tmp
+
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    networks:
+      - backend
+
+  redis:
+    image: redis:7.4-alpine
+
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+
+    expose:
+      - "6379"
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.05"
+          memory: 32M
+
+    restart: unless-stopped
+
+    read_only: true
+    tmpfs:
+      - /data
       - /tmp
 
     security_opt:
