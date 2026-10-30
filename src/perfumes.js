@@ -11,6 +11,8 @@ class MemoryStore {
 
     async init() {}
 
+    async close() {}
+
     async all() {
         return this.items.map(item => ({ ...item }));
     }
@@ -54,6 +56,10 @@ export async function getPerfumeById(id) {
 
 export async function createPerfume(data) {
     return store.create(data);
+}
+
+export async function closeStore() {
+    await store.close();
 }
 
 export { SEED as perfumes };

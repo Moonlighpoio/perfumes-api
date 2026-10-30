@@ -1,6 +1,10 @@
 import request from 'supertest';
 import app from '../src/index.js';
-import { getPerfumeById, createPerfume } from '../src/perfumes.js';
+import { getPerfumeById, createPerfume, closeStore } from '../src/perfumes.js';
+
+afterAll(async () => {
+    await closeStore();
+});
 
 describe('EP2 DevOps - Pruebas automatizadas Perfumes API', () => {
   describe('Health check', () => {
@@ -237,19 +241,19 @@ describe('EP2 DevOps - Pruebas automatizadas Perfumes API', () => {
   });
 
   describe('Capa de datos', () => {
-    test('getPerfumeById obtiene un perfume existente', () => {
-      const perfume = getPerfumeById(1);
+    test('getPerfumeById obtiene un perfume existente', async () => {
+      const perfume = await getPerfumeById(1);
 
       expect(perfume).toBeDefined();
       expect(perfume.id).toBe(1);
     });
 
-    test('getPerfumeById devuelve undefined si no existe', () => {
-      expect(getPerfumeById(99999)).toBeUndefined();
+    test('getPerfumeById devuelve undefined si no existe', async () => {
+      expect(await getPerfumeById(99999)).toBeUndefined();
     });
 
-    test('createPerfume asigna ID y stock predeterminado', () => {
-      const perfume = createPerfume({
+    test('createPerfume asigna ID y stock predeterminado', async () => {
+      const perfume = await createPerfume({
         name: 'Perfume unitario',
         brand: 'Marca prueba',
         price: 15000,

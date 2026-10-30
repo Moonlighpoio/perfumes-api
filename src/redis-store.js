@@ -13,6 +13,10 @@ export class RedisStore {
         this.redis = new Redis(url, { lazyConnect: true, maxRetriesPerRequest: 3 });
     }
 
+    async close() {
+        await this.redis.quit();
+    }
+
     async init() {
         await this.redis.connect();
         const exists = await this.redis.exists(ITEMS_KEY);
