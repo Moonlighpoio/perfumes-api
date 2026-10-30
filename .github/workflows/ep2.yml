@@ -252,7 +252,7 @@ jobs:
 
     env:
       IMAGE_TAG: ${{ needs.docker.outputs.image_tag }}
-      APP_VERSION: "2.0.0"
+      APP_VERSION: "2.0.1"
       GIT_COMMIT: ${{ github.sha }}
 
     steps:

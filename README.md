@@ -276,24 +276,24 @@ smoke test                -> 11 verificaciones OK
 
 ## 🤖 Uso de Inteligencia Artificial
 
-Se utilizó IA (OpenCode) como apoyo para: estructura del pipeline, Dockerfile, configuración de Compose, pruebas automatizadas y redacción técnica del README. Todo el contenido fue revisado y validado por el equipo.
+Se utilizó IA (OpenCode) como apoyo para: estructura del pipeline, Dockerfile, configuración de Compose, pruebas automatizadas y redacción técnica del README. **Todo el contenido fue revisado y validado por el equipo.**
 
-Las **reflexiones individuales** deben ser redactadas por cada integrante sin apoyo de IA, según la pauta del curso. Referencia: <https://bibliotecas.duoc.cl/ia>.
+La IA **no** se usó para redactar conclusiones, justificaciones técnicas ni reflexiones individuales: esas secciones fueron escritas por el equipo. Las **reflexiones individuales** deben ser redactadas por cada integrante sin apoyo de IA, según la pauta del curso. Referencia: <https://bibliotecas.duoc.cl/ia>.
 
 ---
 
 ## 📝 Conclusiones y reflexiones individuales
 
-> ⚠️ Cada integrante debe completar su reflexión personal (sin IA): qué aprendió, qué aportó y qué dificultad enfrentó.
+> ⚠️ Cada integrante debe completar su reflexión personal (sin IA): qué aprendió, qué aportó al proyecto y qué dificultad enfrentó.
 
-### Integrante 1 — Nombre
-_Pendiente de completar por el integrante._
+### Integrante 1 — Matias Gonzalez V. (@wsk4)
+_Pendiente de completar por el integrante (sin IA)._
 
-### Integrante 2 — Nombre
-_Pendiente de completar por el integrante._
+### Integrante 2 — Renato Barriga P. (@Moonlighpoio)
+_Pendiente de completar por el integrante (sin IA)._
 
-### Integrante 3 — Nombre
-_Pendiente de completar por el integrante._
+### Integrante 3 — Cristobal Veliz L. (@Veliz1232)
+_Pendiente de completar por el integrante (sin IA)._
 
 ---
 

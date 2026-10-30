@@ -1,7 +1,7 @@
 {
   "name": "perfumes-api",
-  "version": "2.0.0",
-  "description": "Microservicio de catálogo de perfumes con pipeline CI/CD, contenedores y orquestación",
+  "version": "2.0.1",
+  "description": "Microservicio de cat\u00e1logo de perfumes con pipeline CI/CD, contenedores y orquestaci\u00f3n",
   "main": "src/server.js",
   "packageManager": "pnpm@11.25.0",
   "scripts": {
