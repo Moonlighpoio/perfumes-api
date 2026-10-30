@@ -218,22 +218,24 @@ El repositorio incluye infraestructura como código para desplegar en una instan
 ### Infraestructura
 - `infra/terraform/`: crea EC2 (Amazon Linux 2023), Security Group (puerto 3000), Elastic IP, rol IAM con `AmazonSSMManagedInstanceCore` y bootstrap de Docker/Compose.
 
-### Pasos
-1. Instala Terraform y AWS CLI.
-2. Configura credenciales AWS (`aws configure`).
-3. Aplica la infraestructura:
-   ```bash
-   cd infra/terraform
-   terraform init
-   terraform apply
-   ```
-4. Anota el `instance_id` y la IP pública del output.
-5. En GitHub, configura:
-   - Variable `ENABLE_AWS_DEPLOY=true`
-   - Variable `AWS_REGION` (ej. `us-east-1`)
-   - Variable `AWS_ROLE_ARN` (rol IAM con trust policy para GitHub OIDC)
-   - Variable `EC2_INSTANCE_ID` (ej. `i-0123456789abcdef0`)
-6. El job `deploy-aws` se ejecutará automáticamente en cada push a `main`.
+### Instancia creada y funcionando
+- **IP elástica:** `52.6.32.64`
+- **URL de la app:** http://52.6.32.64:3000
+- **Instance ID:** `i-053abd546e40c1517`
+- **Security Group:** `sg-01394c162c942339f` (puerto 3000 abierto)
+- **Región:** `us-east-1`
+- **Estado:** ✅ Desplegado y funcionando (3 réplicas + Nginx + Redis)
+
+### Pasos restantes
+1. Adjunta el rol IAM `AmazonSSMManagedInstanceCore` a la instancia (si no lo hiciste).
+2. Crea el rol IAM para GitHub OIDC y copia su ARN.
+3. En GitHub → Settings → Variables, configura:
+   - `ENABLE_AWS_DEPLOY` = `true`
+   - `AWS_REGION` = `us-east-1`
+   - `AWS_ROLE_ARN` = `arn:aws:iam::339713132870:role/github-deploy`
+   - `EC2_INSTANCE_ID` = `i-053abd546e40c1517`
+4. Dispara el workflow manualmente o haz un push a `main`.
+5. La app quedará disponible en: http://52.6.32.64:3000
 
 ### Rol IAM para GitHub OIDC
 El rol debe tener una trust policy para `token.actions.githubusercontent.com` con la condición `repo:Moonlighpoio/perfumes-api:ref:refs/heads/main` y permisos `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:DescribeInstanceInformation`.

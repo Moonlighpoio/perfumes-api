@@ -18,7 +18,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
-      APP_VERSION: ${APP_VERSION:-2.0.0}
+      APP_VERSION: ${APP_VERSION:-2.0.1}
       REDIS_URL: redis://redis:6379
 
     expose:
