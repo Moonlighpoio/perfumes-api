@@ -1,0 +1,14 @@
+node_modules
+coverage
+dist
+.git
+.github
+.env
+.env.*
+*.log
+Dockerfile
+compose.yaml
+README.md
+tests
+nginx
+scripts
