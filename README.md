@@ -211,6 +211,33 @@ gh secret set SNYK_TOKEN --repo Moonlighpoio/perfumes-api
 
 ---
 
+## ☁️ Despliegue en AWS EC2 (opcional)
+
+El repositorio incluye infraestructura como código para desplegar en una instancia EC2 real usando **SSM** (sin abrir el puerto SSH).
+
+### Infraestructura
+- `infra/terraform/`: crea EC2 (Amazon Linux 2023), Security Group (puerto 3000), Elastic IP, rol IAM con `AmazonSSMManagedInstanceCore` y bootstrap de Docker/Compose.
+
+### Pasos
+1. Instala Terraform y AWS CLI.
+2. Configura credenciales AWS (`aws configure`).
+3. Aplica la infraestructura:
+   ```bash
+   cd infra/terraform
+   terraform init
+   terraform apply
+   ```
+4. Anota el `instance_id` y la IP pública del output.
+5. En GitHub, configura:
+   - Variable `ENABLE_AWS_DEPLOY=true`
+   - Variable `AWS_REGION` (ej. `us-east-1`)
+   - Variable `AWS_ROLE_ARN` (rol IAM con trust policy para GitHub OIDC)
+   - Variable `EC2_INSTANCE_ID` (ej. `i-0123456789abcdef0`)
+6. El job `deploy-aws` se ejecutará automáticamente en cada push a `main`.
+
+### Rol IAM para GitHub OIDC
+El rol debe tener una trust policy para `token.actions.githubusercontent.com` con la condición `repo:Moonlighpoio/perfumes-api:ref:refs/heads/main` y permisos `ssm:SendCommand`, `ssm:GetCommandInvocation`, `ssm:DescribeInstanceInformation`.
+
 ## 🌿 Estrategia de ramificación (GitFlow)
 
 | Rama | Propósito |
@@ -296,6 +323,13 @@ _Pendiente de completar por el integrante (sin IA)._
 _Pendiente de completar por el integrante (sin IA)._
 
 ---
+
+## 📦 Entrega (AVA y correo)
+
+1. Verificar que el pipeline esté verde en `main`: [Actions](https://github.com/Moonlighpoio/perfumes-api/actions).
+2. Subir el enlace del repositorio en AVA.
+3. Enviar el enlace por correo al docente dentro del plazo.
+4. Adjuntar evidencias: runs verdes, release, imagen GHCR.
 
 ## 📄 Licencia
 
