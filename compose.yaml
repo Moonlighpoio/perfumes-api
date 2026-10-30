@@ -91,15 +91,12 @@ services:
 
     restart: unless-stopped
 
-    read_only: true
     tmpfs:
       - /data
       - /tmp
 
     security_opt:
       - no-new-privileges:true
-    cap_drop:
-      - ALL
 
     networks:
       - backend
