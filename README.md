@@ -2,7 +2,11 @@
 
 Microservicio de catálogo de perfumes (Node.js + Express) con pipeline CI/CD completo, contenedores, análisis de seguridad, despliegue simulado y orquestación con Docker Compose.
 
-[![EP2 CI/CD](https://github.com/Moonlighpoio/perfumes-api/actions/workflows/ep2.yml/badge.svg?branch=develop)](https://github.com/Moonlighpoio/perfumes-api/actions/workflows/ep2.yml)
+![CI/CD develop](https://github.com/Moonlighpoio/perfumes-api/actions/workflows/ep2.yml/badge.svg?branch=develop)
+![CI/CD main](https://github.com/Moonlighpoio/perfumes-api/actions/workflows/ep2.yml/badge.svg?branch=main)
+
+[![Release](https://img.shields.io/github/v/release/Moonlighpoio/perfumes-api)](https://github.com/Moonlighpoio/perfumes-api/releases)
+[![GHCR](https://img.shields.io/badge/imagen-ghcr.io-blue)](https://github.com/Moonlighpoio/perfumes-api/pkgs/container/perfumes-api)
 
 ---
 
@@ -168,7 +172,7 @@ flowchart LR
 | Etapa | Evidencia |
 |---|---|
 | Código | Commit `GITHUB_SHA` |
-| Imagen | `ghcr.io/moonlighpoio/perfumes-api:<SHA>` (tag inmutable; se publica si GHCR está habilitado) |
+| Imagen | `ghcr.io/moonlighpoio/perfumes-api:<SHA>` (tag inmutable, publicado en GHCR) |
 | Artefacto | `image.tar` publicado en el run (fuente del despliegue) |
 | Entorno | `staging` (develop) / `production` (main) con historial de deployments |
 | Verificación | Healthcheck + smoke tests contra el gateway |
@@ -216,6 +220,29 @@ Los merges a `develop` y `main` se realizan por Pull Request con checks obligato
 ### Convención de commits
 
 `feat:`, `fix:`, `test:`, `ci:`, `docs:`, `chore:`, `refactor:`.
+
+---
+
+## ✅ Evidencias de ejecución
+
+| Fecha | Rama / entorno | Evidencia | Resultado |
+|---|---|---|---|
+| 2026-10-30 | `develop` / staging | [Run 41011379597](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41011379597) | ✅ Calidad, seguridad, imagen y despliegue |
+| 2026-10-30 | `main` / production | [Run 41011641821](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41011641821) | ✅ Pipeline completo + release |
+| 2026-10-30 | Release | [v2.0.0](https://github.com/Moonlighpoio/perfumes-api/releases/tag/v2.0.0) | ✅ Tag y release creados |
+| 2026-10-30 | Imagen | [GHCR](https://github.com/Moonlighpoio/perfumes-api/pkgs/container/perfumes-api) | ✅ Tags `develop`, `main`, `latest` y SHA |
+
+### Verificación local (previa al push)
+
+```
+pnpm lint                 -> OK
+pnpm test:ci              -> 30/30 pruebas, 100% cobertura
+pnpm audit --prod         -> 0 vulnerabilidades
+docker build              -> OK (multi-stage, non-root)
+trivy image (HIGH/CRIT)   -> 0 vulnerabilidades corregibles
+docker compose up --wait  -> 3 réplicas de API + gateway healthy
+smoke test                -> 11 verificaciones OK
+```
 
 ---
 
