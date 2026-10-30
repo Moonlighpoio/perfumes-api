@@ -23,7 +23,7 @@ API REST que permite listar, filtrar, buscar, ordenar y crear perfumes. El objet
 | Contenedores | Docker multi-stage (non-root) |
 | Orquestación | Docker Compose + 3 réplicas + Nginx |
 | CI/CD | GitHub Actions |
-| Seguridad | Dependabot + `pnpm audit` + Snyk + Trivy |
+| Seguridad | Dependabot + `pnpm audit` + Snyk + Trivy + CodeQL |
 | Registro de imágenes | GitHub Container Registry (GHCR) |
 
 ---
@@ -125,7 +125,7 @@ Se ejecuta en **push a `develop`/`main`**, **pull requests** y manualmente (`wor
 | # | Job | Qué hace | Gate |
 |---|---|---|---|
 | 1 | **Calidad y pruebas** | `pnpm lint`, Jest + Supertest, cobertura | Falla si lint o tests fallan, o si la cobertura baja de 90% |
-| 2 | **Seguridad** | `pnpm audit --prod`, Snyk (dependencias + código) | Falla con vulnerabilidades altas/críticas |
+| 2 | **Seguridad** | `pnpm audit --prod`, Snyk Open Source, Snyk Code/CodeQL (SAST) | Falla con vulnerabilidades altas/críticas |
 | 3 | **Imagen Docker** | Build multi-stage, escaneo Trivy, artefacto, push a GHCR | Falla si Trivy detecta HIGH/CRITICAL corregibles |
 | 4 | **Despliegue** | Compose con 3 réplicas + Nginx, healthchecks y smoke tests | Falla si el entorno no responde o no hay 3 réplicas |
 | 5 | **Release** (solo `main`) | Crea tag y release `vX.Y.Z` | Trazabilidad versión → commit |
@@ -154,6 +154,7 @@ flowchart LR
 - **`pnpm audit --prod`** bloqueante en cada ejecución.
 - **Snyk Open Source** para dependencias (`snyk test`), bloqueante con severidad `high`.
 - **Snyk Code** para análisis estático (`snyk code test`). Se ejecuta cuando la organización tiene Snyk Code habilitado; si no, el pipeline emite una advertencia y mantiene los demás gates activos.
+- **CodeQL** analiza el código JavaScript/TypeScript en cada push, PR y semanalmente, y publica los hallazgos en la pestaña *Security*.
 - **Trivy** escanea la imagen construida y publica resultados SARIF en la pestaña *Security*.
 - **Bloqueo real**: `docker` depende de `security`; `deploy` depende de `docker`. Si la seguridad falla, no se construye ni despliega.
 - Hardening de contenedores: usuario no-root, `read_only`, `cap_drop: ALL`, `no-new-privileges`, límites de recursos y healthchecks.
@@ -255,7 +256,7 @@ smoke test                -> 11 verificaciones OK
 |---|---|---|
 | **IE1** Contenedores | 20% | `Dockerfile` multi-stage, `.dockerignore`, build en job `docker`, imagen non-root |
 | **IE2** Pruebas automatizadas | 20% | `tests/perfumes.test.js`, `jest.config.js`, umbral 90%, job `quality` |
-| **IE3** Seguridad y escalabilidad | 20% | `.github/dependabot.yml`, Snyk, Trivy, `pnpm audit`, gates con `needs`, réplicas y límites |
+| **IE3** Seguridad y escalabilidad | 20% | `.github/dependabot.yml`, Snyk, CodeQL, Trivy, `pnpm audit`, gates con `needs`, réplicas y límites |
 | **IE4** Despliegue y trazabilidad | 20% | Job `deploy`, entornos staging/production, tag SHA, GHCR, smoke tests, release |
 | **IE5** Orquestación | 20% | `compose.yaml` con 3 réplicas, Nginx, red interna, healthchecks, hardening |
 
