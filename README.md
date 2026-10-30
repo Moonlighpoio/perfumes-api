@@ -125,7 +125,7 @@ Se ejecuta en **push a `develop`/`main`**, **pull requests** y manualmente (`wor
 | # | Job | Qué hace | Gate |
 |---|---|---|---|
 | 1 | **Calidad y pruebas** | `pnpm lint`, Jest + Supertest, cobertura | Falla si lint o tests fallan, o si la cobertura baja de 90% |
-| 2 | **Seguridad** | `pnpm audit --prod`, Snyk Open Source, Snyk Code/CodeQL (SAST) | Falla con vulnerabilidades altas/críticas |
+| 2 | **Seguridad** | `pnpm audit --prod`, Snyk Open Source, Snyk Code (SAST), CodeQL | Falla con vulnerabilidades altas/críticas |
 | 3 | **Imagen Docker** | Build multi-stage, escaneo Trivy, artefacto, push a GHCR | Falla si Trivy detecta HIGH/CRITICAL corregibles |
 | 4 | **Despliegue** | Compose con 3 réplicas + Nginx, healthchecks y smoke tests | Falla si el entorno no responde o no hay 3 réplicas |
 | 5 | **Release** (solo `main`) | Crea tag y release `vX.Y.Z` | Trazabilidad versión → commit |
@@ -153,13 +153,13 @@ flowchart LR
 - **Dependabot** semanal para npm, Docker y GitHub Actions (`.github/dependabot.yml`).
 - **`pnpm audit --prod`** bloqueante en cada ejecución.
 - **Snyk Open Source** para dependencias (`snyk test`), bloqueante con severidad `high`.
-- **Snyk Code** para análisis estático (`snyk code test`). Se ejecuta cuando la organización tiene Snyk Code habilitado; si no, el pipeline emite una advertencia y mantiene los demás gates activos.
+- **Snyk Code** para análisis estático (`snyk code test`), bloqueante con severidad `high` (0 hallazgos en el último análisis).
 - **CodeQL** analiza el código JavaScript/TypeScript en cada push, PR y semanalmente, y publica los hallazgos en la pestaña *Security*.
 - **Trivy** escanea la imagen construida y publica resultados SARIF en la pestaña *Security*.
 - **Bloqueo real**: `docker` depende de `security`; `deploy` depende de `docker`. Si la seguridad falla, no se construye ni despliega.
 - Hardening de contenedores: usuario no-root, `read_only`, `cap_drop: ALL`, `no-new-privileges`, límites de recursos y healthchecks.
 
-> Para habilitar Snyk, configura el secreto `SNYK_TOKEN` (ver [Configuración del repositorio](#-configuración-del-repositorio)). Si no existe, el pipeline sigue funcionando con `pnpm audit` + Trivy y muestra una advertencia.
+> `SNYK_TOKEN` está configurado. Snyk Open Source y Snyk Code se ejecutan en cada pipeline; si no existiera el secreto, el pipeline seguiría funcionando con `pnpm audit` + Trivy y mostraría una advertencia.
 
 ### Escalabilidad y orquestación (IE3 / IE5)
 
@@ -231,8 +231,9 @@ Los merges a `develop` y `main` se realizan por Pull Request con checks obligato
 
 | Fecha | Rama / entorno | Evidencia | Resultado |
 |---|---|---|---|
-| 2026-10-30 | `develop` / staging | [Run 41012209015](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41012209015) | ✅ Calidad, seguridad, imagen y despliegue |
-| 2026-10-30 | `main` / production | [Run 41012189050](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41012189050) | ✅ Pipeline completo + release |
+| 2026-10-30 | `develop` / staging | [Run 41014265206](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014265206) | ✅ Calidad, seguridad (Snyk Code incluido), imagen y despliegue |
+| 2026-10-30 | `main` / production | [Run 41014267865](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014267865) | ✅ Pipeline completo + release |
+| 2026-10-30 | CodeQL | [develop](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014265241) / [main](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014267878) | ✅ 0 alertas abiertas |
 | 2026-10-30 | Release | [v2.0.0](https://github.com/Moonlighpoio/perfumes-api/releases/tag/v2.0.0) | ✅ Tag y release creados |
 | 2026-10-30 | Imagen | [GHCR](https://github.com/Moonlighpoio/perfumes-api/pkgs/container/perfumes-api) | ✅ Tags `develop`, `main`, `latest` y SHA |
 

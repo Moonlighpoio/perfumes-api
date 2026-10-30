@@ -151,6 +151,15 @@ jobs:
         id: meta
         run: echo "tag=${IMAGE_NAME}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
 
+      - name: Definir tags de la imagen
+        id: image-tags
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ref_tag=${IMAGE_NAME}:pr-${{ github.event.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref_tag=${IMAGE_NAME}:${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Construir imagen
         run: |
           VERSION="$(node -p "require('./package.json').version")"
@@ -158,7 +167,7 @@ jobs:
             --build-arg VERSION="$VERSION" \
             --build-arg COMMIT="$GITHUB_SHA" \
             -t "${IMAGE_NAME}:${GITHUB_SHA}" \
-            -t "${IMAGE_NAME}:${GITHUB_REF_NAME}" \
+            -t "${{ steps.image-tags.outputs.ref_tag }}" \
             .
 
       - name: Escanear imagen con Trivy (bloqueante)
@@ -183,7 +192,7 @@ jobs:
         run: |
           docker save \
             "${IMAGE_NAME}:${GITHUB_SHA}" \
-            "${IMAGE_NAME}:${GITHUB_REF_NAME}" \
+            "${{ steps.image-tags.outputs.ref_tag }}" \
             -o image.tar
 
       - name: Publicar artefacto de imagen
@@ -201,7 +210,7 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           docker push "${IMAGE_NAME}:${GITHUB_SHA}"
-          docker push "${IMAGE_NAME}:${GITHUB_REF_NAME}"
+          docker push "${{ steps.image-tags.outputs.ref_tag }}"
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             docker tag "${IMAGE_NAME}:${GITHUB_SHA}" "${IMAGE_NAME}:latest"
             docker push "${IMAGE_NAME}:latest"
