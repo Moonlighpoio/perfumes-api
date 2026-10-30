@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../src/index.js';
-import { getPerfumeById, createPerfume, closeStore } from '../src/perfumes.js';
+import { getPerfumeById, createPerfume, closeStore, MemoryStore } from '../src/perfumes.js';
 
 afterAll(async () => {
     await closeStore();
@@ -262,6 +262,27 @@ describe('EP2 DevOps - Pruebas automatizadas Perfumes API', () => {
 
       expect(perfume.id).toBeDefined();
       expect(perfume.stock).toBe(0);
+    });
+  });
+
+  describe('MemoryStore (fallback sin Redis)', () => {
+    test('inicializa, lista, obtiene, crea y cierra', async () => {
+      const store = new MemoryStore();
+      await store.init();
+      const all = await store.all();
+      expect(all.length).toBeGreaterThan(0);
+      const found = await store.getById(1);
+      expect(found.id).toBe(1);
+      expect(await store.getById(99999)).toBeUndefined();
+      const created = await store.create({
+        name: 'Perfume memoria',
+        brand: 'Marca',
+        price: 1000,
+        category: 'unisex'
+      });
+      expect(created.id).toBeDefined();
+      expect(created.stock).toBe(0);
+      await store.close();
     });
   });
 });

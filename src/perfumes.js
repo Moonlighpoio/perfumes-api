@@ -3,7 +3,7 @@ const SEED = [
     { id: 2, name: 'Dior Sauvage', brand: 'Dior', price: 99990, category: 'masculino', stock: 20 }
 ];
 
-class MemoryStore {
+export class MemoryStore {
     constructor() {
         this.items = SEED.map(item => ({ ...item }));
         this.nextId = 3;
