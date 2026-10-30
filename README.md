@@ -232,8 +232,8 @@ Los merges a `develop` y `main` se realizan por Pull Request con checks obligato
 
 | Fecha | Rama / entorno | Evidencia | Resultado |
 |---|---|---|---|
-| 2026-10-30 | `develop` / staging | [Run 41016523460](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41016523460) | ✅ Calidad, seguridad (Snyk Open Source + Snyk Code 0 issues), imagen y despliegue |
-| 2026-10-30 | `main` / production | [Run 41016526100](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41016526100) | ✅ Pipeline completo + release |
+| 2026-10-30 | `develop` / staging | [Run 41021007374](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41021007374) | ✅ Calidad, seguridad, imagen, despliegue (3 réplicas + Redis) |
+| 2026-10-30 | `main` / production | [Run 41021010108](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41021010108) | ✅ Pipeline completo + release |
 | 2026-10-30 | CodeQL | [develop](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014265241) / [main](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41014267878) | ✅ 0 alertas abiertas |
 | 2026-10-30 | Release | [v2.0.0](https://github.com/Moonlighpoio/perfumes-api/releases/tag/v2.0.0) | ✅ Tag y release creados |
 | 2026-10-30 | Imagen | [GHCR](https://github.com/Moonlighpoio/perfumes-api/pkgs/container/perfumes-api) | ✅ Tags `develop`, `main`, `latest` y SHA |
@@ -242,7 +242,7 @@ Los merges a `develop` y `main` se realizan por Pull Request con checks obligato
 
 ```
 pnpm lint                 -> OK
-pnpm test:ci              -> 30/30 pruebas, 100% cobertura
+pnpm test:ci              -> 31/31 pruebas, 100% cobertura
 pnpm audit --prod         -> 0 vulnerabilidades
 docker build              -> OK (multi-stage, non-root)
 trivy image (HIGH/CRIT)   -> 0 vulnerabilidades corregibles
