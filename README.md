@@ -152,7 +152,8 @@ flowchart LR
 
 - **Dependabot** semanal para npm, Docker y GitHub Actions (`.github/dependabot.yml`).
 - **`pnpm audit --prod`** bloqueante en cada ejecución.
-- **Snyk** para dependencias (`snyk test`) y análisis de código (`snyk code test`), bloqueante con severidad `high`.
+- **Snyk Open Source** para dependencias (`snyk test`), bloqueante con severidad `high`.
+- **Snyk Code** para análisis estático (`snyk code test`). Se ejecuta cuando la organización tiene Snyk Code habilitado; si no, el pipeline emite una advertencia y mantiene los demás gates activos.
 - **Trivy** escanea la imagen construida y publica resultados SARIF en la pestaña *Security*.
 - **Bloqueo real**: `docker` depende de `security`; `deploy` depende de `docker`. Si la seguridad falla, no se construye ni despliega.
 - Hardening de contenedores: usuario no-root, `read_only`, `cap_drop: ALL`, `no-new-privileges`, límites de recursos y healthchecks.

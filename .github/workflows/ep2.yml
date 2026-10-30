@@ -109,7 +109,22 @@ jobs:
           fi
           npm install -g snyk@1.1308.3
           snyk test --prod --severity-threshold=high --all-projects
-          snyk code test --severity-threshold=high
+
+          # Snyk Code (SAST) requiere que la organización lo tenga habilitado.
+          # Si no está activo, se advierte pero no se bloquea el pipeline:
+          # Snyk Open Source y Trivy siguen siendo gates obligatorios.
+          set +e
+          code_output=$(snyk code test --severity-threshold=high 2>&1)
+          code_status=$?
+          set -e
+          echo "$code_output"
+          if [ "$code_status" -ne 0 ]; then
+            if echo "$code_output" | grep -q "Snyk Code is not enabled"; then
+              echo "::warning title=Snyk Code no habilitado::Activa Snyk Code en la organización para el análisis SAST. Snyk Open Source y Trivy siguen bloqueando."
+            else
+              exit "$code_status"
+            fi
+          fi
 
   # -------------------------------------------------------------------------
   # 3. Imagen: build + escaneo de vulnerabilidades + push a GHCR
