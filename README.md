@@ -162,7 +162,9 @@ flowchart LR
 ### Escalabilidad y orquestación (IE3 / IE5)
 
 - **3 réplicas** de la API (`deploy.replicas: 3`) detrás de Nginx.
-- Balanceo mediante DNS interno de Docker (`resolver 127.0.0.11`) y `proxy_pass` dinámico.
+- Balanceo con `upstream` de Nginx y afinidad por IP (`ip_hash`) sobre las 3 réplicas.
+- DNS interno de Docker con `resolver 127.0.0.11` para refrescar las IPs de las réplicas.
+- La afinidad por IP mantiene consistencia entre `POST` y `GET` sobre el catálogo en memoria.
 - Límites y reservas de CPU/memoria por servicio.
 - Healthchecks de API y gateway; `depends_on` con `condition: service_healthy`.
 - Red interna segmentada: la API no está expuesta directamente.
