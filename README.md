@@ -56,6 +56,7 @@ flowchart LR
 
 | Método | Endpoint | Descripción |
 |---|---|---|
+| GET | `/` | Información básica del servicio |
 | GET | `/health` | Estado del servicio y versión |
 | GET | `/perfumes` | Lista, filtra, busca y ordena perfumes |
 | GET | `/perfumes/:id` | Obtiene un perfume por ID |

@@ -87,6 +87,15 @@ app.post('/perfumes', async (req, res) => {
     res.status(201).json(newPerfume);
 });
 
+// Ruta raíz: información básica del servicio
+app.get('/', (req, res) => {
+    res.json({
+        service: 'perfume-catalog-api',
+        version: process.env.APP_VERSION || 'dev',
+        endpoints: ['/health', '/perfumes', '/perfumes/:id']
+    });
+});
+
 // Ruta no encontrada
 app.use((req, res) => {
     res.status(404).json({ error: 'Not found' });

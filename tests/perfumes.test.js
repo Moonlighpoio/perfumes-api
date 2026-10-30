@@ -32,6 +32,15 @@ describe('EP2 DevOps - Pruebas automatizadas Perfumes API', () => {
     });
   });
 
+  describe('Ruta raíz', () => {
+    test('GET / responde 200 con información del servicio', async () => {
+      const res = await request(app).get('/');
+      expect(res.status).toBe(200);
+      expect(res.body.service).toBe('perfume-catalog-api');
+      expect(res.body.endpoints).toContain('/health');
+    });
+  });
+
   describe('GET /perfumes', () => {
     test('devuelve el catálogo completo', async () => {
       const res = await request(app).get('/perfumes');
