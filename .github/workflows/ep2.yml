@@ -180,7 +180,9 @@ jobs:
           retention-days: 7
 
       - name: Publicar imagen en GHCR
+        id: publish
         if: github.event_name == 'push'
+        continue-on-error: true
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           docker push "${IMAGE_NAME}:${GITHUB_SHA}"
@@ -189,6 +191,12 @@ jobs:
             docker tag "${IMAGE_NAME}:${GITHUB_SHA}" "${IMAGE_NAME}:latest"
             docker push "${IMAGE_NAME}:latest"
           fi
+
+      - name: Advertir si GHCR no está habilitado
+        if: steps.publish.outcome == 'failure'
+        run: |
+          echo "::warning title=GHCR::No se pudo publicar la imagen. Ejecuta scripts/configure-repo.sh o habilita 'Read and write permissions' en Settings > Actions > General."
+          echo "El despliegue continuará usando el artefacto inmutable de este run."
 
   # -------------------------------------------------------------------------
   # 4. Despliegue simulado en entorno cloud (Docker Compose + Nginx)

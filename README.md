@@ -168,8 +168,8 @@ flowchart LR
 | Etapa | Evidencia |
 |---|---|
 | Código | Commit `GITHUB_SHA` |
-| Imagen | `ghcr.io/moonlighpoio/perfumes-api:<SHA>` (tag inmutable) |
-| Artefacto | `image.tar` publicado en el run |
+| Imagen | `ghcr.io/moonlighpoio/perfumes-api:<SHA>` (tag inmutable; se publica si GHCR está habilitado) |
+| Artefacto | `image.tar` publicado en el run (fuente del despliegue) |
 | Entorno | `staging` (develop) / `production` (main) con historial de deployments |
 | Verificación | Healthcheck + smoke tests contra el gateway |
 | Versión | Release/tag `vX.Y.Z` en `main` |
