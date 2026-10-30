@@ -229,8 +229,8 @@ Los merges a `develop` y `main` se realizan por Pull Request con checks obligato
 
 | Fecha | Rama / entorno | Evidencia | Resultado |
 |---|---|---|---|
-| 2026-10-30 | `develop` / staging | [Run 41011379597](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41011379597) | ✅ Calidad, seguridad, imagen y despliegue |
-| 2026-10-30 | `main` / production | [Run 41011641821](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41011641821) | ✅ Pipeline completo + release |
+| 2026-10-30 | `develop` / staging | [Run 41012209015](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41012209015) | ✅ Calidad, seguridad, imagen y despliegue |
+| 2026-10-30 | `main` / production | [Run 41012189050](https://github.com/Moonlighpoio/perfumes-api/actions/runs/41012189050) | ✅ Pipeline completo + release |
 | 2026-10-30 | Release | [v2.0.0](https://github.com/Moonlighpoio/perfumes-api/releases/tag/v2.0.0) | ✅ Tag y release creados |
 | 2026-10-30 | Imagen | [GHCR](https://github.com/Moonlighpoio/perfumes-api/pkgs/container/perfumes-api) | ✅ Tags `develop`, `main`, `latest` y SHA |
 
